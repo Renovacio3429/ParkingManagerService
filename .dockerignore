@@ -1,0 +1,13 @@
+# Исключаем папки и файлы, не нужные для сборки образа
+.git
+.gitignore
+target
+*.md
+*.log
+*.iml
+.idea
+.vscode
+.env
+docker-compose.yml
+*.swp
+.DS_Store

@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    enabled: true
+
+parking:
+  batch:
+    report-cron: "0 0 12 * * ?"
+  capacity: 100

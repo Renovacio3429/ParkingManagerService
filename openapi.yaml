@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: Parking Manager Service API
+  description: API для управления парковкой и отчетности по парковочным местам
+  version: "1.0.0"
+servers:
+  - url: /api/v1
+
+paths:
+  /parking/entry:
+    post:
+      operationId: parkingEntryPOST
+      summary: Регистрация автомобиля на парковке
+      tags:
+        - Parking
+      requestBody:
+        description: Данные о въезде автомобиля на парковку
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParkingEntryRequest'
+      responses:
+        '200':
+          description: Время въезда автомобиля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingEntryResponse'
+        '400':
+          description: Ошибка валидации или бизнес-логики
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: Не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Конфликт (например, машина уже на парковке)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /parking/exit:
+    post:
+      operationId: parkingExitPOST
+      summary: Обработка выезда автомобиля с парковки
+      tags:
+        - Parking
+      requestBody:
+        description: Данные о выезде автомобиля с парковки
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParkingExitRequest'
+      responses:
+        '200':
+          description: Время выезда автомобиля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingExitResponse'
+        '400':
+          description: Ошибка валидации или бизнес-логики
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: Не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Конфликт (например, машина уже на парковке)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /parking/report:
+    get:
+      operationId: parkingReportGET
+      summary: Получение отчета по парковке за период
+      tags:
+        - Parking
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Конечная дата периода (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Отчет по парковке за период
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingReportResponse'
+        '400':
+          description: Ошибка валидации или бизнес-логики
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: Не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Конфликт (например, машина уже на парковке)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+components:
+  schemas:
+    ApiError:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP-код ошибки
+        message:
+          type: string
+          description: Описание ошибки
+    ParkingEntryRequest:
+      type: object
+      required:
+        - carNumber
+        - carType
+      properties:
+        carNumber:
+          type: string
+          description: Номер автомобиля
+        carType:
+          type: string
+          description: Тип автомобиля
+
+    ParkingEntryResponse:
+      type: object
+      properties:
+        entryTime:
+          type: string
+          format: date-time
+          description: Время въезда
+
+    ParkingExitRequest:
+      type: object
+      required:
+        - carNumber
+      properties:
+        carNumber:
+          type: string
+          description: Номер автомобиля
+
+    ParkingExitResponse:
+      type: object
+      properties:
+        exitTime:
+          type: string
+          format: date-time
+          description: Время выезда
+
+    ParkingReportResponse:
+      type: object
+      properties:
+        occupiedSpaces:
+          type: integer
+          format: int64
+          description: Количество занятых мест
+        freeSpaces:
+          type: integer
+          format: int64
+          description: Количество свободных мест
+        avgStayDurationMinutes:
+          type: number
+          format: double
+          description: Среднее время пребывания автомобилей на парковке (в минутах)
