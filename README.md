@@ -72,6 +72,7 @@
 
     docker compose up --build
     (Для остановки - docker compose down)
+    удалить данные бд docker - volume rm parkingmanagerservice_db-data
 
 ---
 
