@@ -65,6 +65,9 @@
 
 ## Сборка и запуск
 
+    Для корректной работы с open api нужно сгенерировать класссы mvn clean generate-sources
+    и пометить директорию target/generated-sources/openapi как source
+
 ### 1. Запуск через docker-compose
 
     docker compose up --build
